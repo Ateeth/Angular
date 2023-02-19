@@ -1,0 +1,515 @@
+I. Create new component :
+
+1. App must be running i.e ng serve 
+2. ng generate {Component name}
+
+II. String Interpolation
+
+Any variable or a method/function that returns a string is placed within {{}} is converted to string and printed
+example : 
+sever.component.html file
+<p>Server with ID {{ serverID }} is {{ getServerStatus() }}.</p>
+
+server.component.ts file
+export class ServerComponent {
+  serverID: number = 10;
+  serverStatus: string = 'offline';
+
+  getServerStatus(): string {
+    return this.serverStatus;
+  }
+}
+
+III. Property Binding
+Property binding in Angular helps you set values for properties of HTML elements or directives. Use property binding to do things such as toggle button features, set paths programmatically, and share values between components.
+Keep in mind that property has to be given in[] like ["disabled"] for button below and ["innerText] below
+
+example :
+servers.component.html file
+<!--Property Binding-->
+<button class="btn btn-primary" [disabled]="!allowNewServer">Add Server</button>
+<p [innerText]="allowNewServer"></p>
+<app-server></app-server>
+<app-server></app-server>
+
+
+servers.component.ts file
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-servers',
+  templateUrl: './servers.component.html',
+  //template: ` <app-server></app-server><app-server></app-server>`,
+  styleUrls: ['./servers.component.css'],
+})
+export class ServersComponent implements OnInit {
+  allowNewServer = false;
+
+  constructor() {
+    setTimeout(() => {
+      this.allowNewServer = true;
+    }, 2000);
+  }
+
+  ngOnInit(): void {}
+}
+
+IV. Event Binding
+Keep in mind the event can be mentioned in () example if an event on click of button (click)
+
+example : 
+servers.component.ts file
+<!--Event Binding-->
+<button
+  class="btn btn-primary"
+  [disabled]="!allowNewServer"
+  (click)="onCreateServer()"
+>
+  Add Server
+</button>
+<!--<p [innerText]="allowNewServer"></p> -->
+<p>{{ serverCreationStatus }}</p>
+<app-server></app-server>
+<app-server></app-server>
+
+servers.components.ts file
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-servers',
+  templateUrl: './servers.component.html',
+  //template: ` <app-server></app-server><app-server></app-server>`,
+  styleUrls: ['./servers.component.css'],
+})
+export class ServersComponent implements OnInit {
+  allowNewServer = false;
+  serverCreationStatus = 'No Server was created !';
+
+  constructor() {
+    setTimeout(() => {
+      this.allowNewServer = true;
+    }, 2000);
+  }
+
+  ngOnInit(): void {}
+
+  onCreateServer(): void {
+    this.serverCreationStatus = 'Server was created';
+  }
+}
+
+V. Pass and use data with event binding
+Pass parameter using $event parameter from the html file 
+
+servers.component.html file
+<!--Passing and Using data Event Binding-->
+<label>Server Name</label>
+<input type="text" class="form-control" (input)="onUpdateServerName($event)" />
+
+<p>{{ serverName }}</p>
+
+<button
+  class="btn btn-primary"
+  [disabled]="!allowNewServer"
+  (click)="onCreateServer()"
+>
+  Add Server
+</button>
+<!--<p [innerText]="allowNewServer"></p> -->
+<p>{{ serverCreationStatus }}</p>
+<app-server></app-server>
+<app-server></app-server>
+
+servers.component.ts file
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-servers',
+  templateUrl: './servers.component.html',
+  //template: ` <app-server></app-server><app-server></app-server>`,
+  styleUrls: ['./servers.component.css'],
+})
+export class ServersComponent implements OnInit {
+  allowNewServer = false;
+  serverCreationStatus = 'No Server was created !';
+  serverName = '';
+
+  constructor() {
+    setTimeout(() => {
+      this.allowNewServer = true;
+    }, 2000);
+  }
+
+  ngOnInit(): void {}
+
+  onCreateServer(): void {
+    this.serverCreationStatus = 'Server was created';
+  }
+
+  onUpdateServerName(event: Event) {
+    this.serverName = (<HTMLInputElement>event.target).value;
+  }
+}
+
+VI. Two way Binding
+Two-way binding gives components in your application a way to share data. Use two-way binding to listen for events and update values simultaneously between parent and child components.
+
+Note : need to enable the ngModel  directive. This is done by adding the FormsModule  to the imports[]  array in the AppModule.
+
+You then also need to add the import from @angular/forms  in the app.module.ts file:
+
+import { FormsModule } from '@angular/forms'; 
+
+In the below example when the serverName is typed in below input then the value is updated simultaneously and a function need not be called
+
+Example : 
+servers.component.html file
+<!-- Two way binding is reacting to events in both directions-->
+
+<label>Server Name</label>
+<!--
+  <input type="text" class="form-control" (input)="onUpdateServerName($event)" />
+-->
+
+<input type="text" class="form-control" [(ngModel)]="serverName" />
+<p>{{ serverName }}</p>
+
+<button
+  class="btn btn-primary"
+  [disabled]="!allowNewServer"
+  (click)="onCreateServer()"
+>
+  Add Server
+</button>
+<!--<p [innerText]="allowNewServer"></p> -->
+<p>{{ serverCreationStatus }}</p>
+<app-server></app-server>
+<app-server></app-server>
+
+servers.component.ts file
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-servers',
+  templateUrl: './servers.component.html',
+  //template: ` <app-server></app-server><app-server></app-server>`,
+  styleUrls: ['./servers.component.css'],
+})
+export class ServersComponent implements OnInit {
+  allowNewServer = false;
+  serverCreationStatus = 'No Server was created !';
+  serverName = 'TestServer';
+
+  constructor() {
+    setTimeout(() => {
+      this.allowNewServer = true;
+    }, 2000);
+  }
+
+  ngOnInit(): void {}
+
+  onCreateServer(): void {
+    this.serverCreationStatus = 'Server was created';
+  }
+
+  onUpdateServerName(event: Event) {
+    this.serverName = (<HTMLInputElement>event.target).value;
+  }
+}
+
+VII. Using ngIf to Output data conditionally
+In the below example a message is displayed only when the Add Server button is clicked which can be maintained using a serverCreated variable to be true when the button is clicked
+
+*ngIf can be used with a condition which in the below example is when serverCreated is true
+
+example : 
+
+servers.component.html file
+<!--Use ngIf to output data conditionally-->
+
+<label>Server Name</label>
+<!--
+  <input type="text" class="form-control" (input)="onUpdateServerName($event)" />
+-->
+
+<input type="text" class="form-control" [(ngModel)]="serverName" />
+<!--<p>{{ serverName }}</p> -->
+
+<button
+  class="btn btn-primary"
+  [disabled]="!allowNewServer"
+  (click)="onCreateServer()"
+>
+  Add Server
+</button>
+<!--<p [innerText]="allowNewServer"></p> -->
+<!--<p>{{ serverCreationStatus }}</p>-->
+
+<!--If serverCreated is true then only message displayed-->
+<p *ngIf="serverCreated">
+  Server was created and the server name is {{ serverName }}
+</p>
+
+<app-server></app-server>
+<app-server></app-server>
+
+
+servers.component.ts file
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-servers',
+  templateUrl: './servers.component.html',
+  //template: ` <app-server></app-server><app-server></app-server>`,
+  styleUrls: ['./servers.component.css'],
+})
+export class ServersComponent implements OnInit {
+  allowNewServer = false;
+  serverCreationStatus = 'No Server was created !';
+  serverName = 'TestServer';
+  serverCreated = false;
+
+  constructor() {
+    setTimeout(() => {
+      this.allowNewServer = true;
+    }, 2000);
+  }
+
+  ngOnInit(): void {}
+
+  onCreateServer(): void {
+    this.serverCreated = true;
+    this.serverCreationStatus =
+      'Server was created & The name of the server is ' + this.serverName;
+  }
+
+  onUpdateServerName(event: Event) {
+    this.serverName = (<HTMLInputElement>event.target).value;
+  }
+}
+
+VIII.Enhance ngIf with else condition
+As handled below label the else condition as a term as in below it is labelled noServer , create an ng-template tag for the else case with #{term for else condtion}
+
+Checl the below example for an understanding , below example is when no button is clicked it is displayed no server is created , when button is clicked server created message is displayed
+
+eample : 
+
+servers.component.html file
+<!--Use ngIf to output data conditionally-->
+
+<label>Server Name</label>
+<!--
+  <input type="text" class="form-control" (input)="onUpdateServerName($event)" />
+-->
+
+<input type="text" class="form-control" [(ngModel)]="serverName" />
+<!--<p>{{ serverName }}</p> -->
+
+<button
+  class="btn btn-primary"
+  [disabled]="!allowNewServer"
+  (click)="onCreateServer()"
+>
+  Add Server
+</button>
+<!--<p [innerText]="allowNewServer"></p> -->
+<!--<p>{{ serverCreationStatus }}</p>-->
+
+<!--If serverCreated is true then only message displayed-->
+<p *ngIf="serverCreated; else noServer">
+  Server was created and the server name is {{ serverName }}
+</p>
+
+<ng-template #noServer>
+  <p>No server was created</p>
+</ng-template>
+<app-server></app-server>
+<app-server></app-server>
+
+
+servers.component.ts file
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-servers',
+  templateUrl: './servers.component.html',
+  //template: ` <app-server></app-server><app-server></app-server>`,
+  styleUrls: ['./servers.component.css'],
+})
+export class ServersComponent implements OnInit {
+  allowNewServer = false;
+  serverCreationStatus = 'No Server was created !';
+  serverName = 'TestServer';
+  serverCreated = false;
+
+  constructor() {
+    setTimeout(() => {
+      this.allowNewServer = true;
+    }, 2000);
+  }
+
+  ngOnInit(): void {}
+
+  onCreateServer(): void {
+    this.serverCreated = true;
+    this.serverCreationStatus =
+      'Server was created & The name of the server is ' + this.serverName;
+  }
+
+  onUpdateServerName(event: Event) {
+    this.serverName = (<HTMLInputElement>event.target).value;
+  }
+}
+
+IX. Add styles dynamically using ngStyles 
+ngStyle wrapped in [] for property binding can be used to add styles to elements dynamically depending on their value. In the below example first the server status is randomly made offline or online when the page is loaded. A function is used to return a color and the status can be made to that color dependning if it is online or offline. This is possible using ngStyle
+
+example : 
+server.component.html file : 
+<p [ngStyle]="{ backgroundColor: getColor() }">
+  Server with ID {{ serverID }} is {{ getServerStatus() }}.
+</p>
+
+server.component.ts file
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-server',
+  templateUrl: './server.component.html',
+})
+export class ServerComponent {
+  serverID: number = 10;
+  serverStatus: string = 'offline';
+
+  constructor() {
+    this.serverStatus = Math.random() > 0.5 ? 'online' : 'offline';
+  }
+  getServerStatus(): string {
+    return this.serverStatus;
+  }
+
+  getColor() {
+    return this.serverStatus === 'online' ? 'green' : 'red';
+  }
+}
+
+X. Add class dynamically using ngClass
+ngClass in [] for property binding can be used to add classes depending on their value. In the below example class online which makes text color white if server is online
+
+example : 
+server.component.html file
+<!--String Interpolation-->
+<p
+  [ngStyle]="{ backgroundColor: getColor() }"
+  [ngClass]="{ online: serverStatus === 'online' }"
+>
+  Server with ID {{ serverID }} is {{ getServerStatus() }}.
+</p>
+
+server.component.css file
+<!--String Interpolation-->
+<p
+  [ngStyle]="{ backgroundColor: getColor() }"
+  [ngClass]="{ online: serverStatus === 'online' }"
+>
+  Server with ID {{ serverID }} is {{ getServerStatus() }}.
+</p>
+
+server.component.ts file
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-server',
+  templateUrl: './server.component.html',
+  styleUrls: ['./server.component.css'],
+})
+export class ServerComponent {
+  serverID: number = 10;
+  serverStatus: string = 'offline';
+
+  constructor() {
+    this.serverStatus = Math.random() > 0.5 ? 'online' : 'offline';
+  }
+  getServerStatus(): string {
+    return this.serverStatus;
+  }
+
+  getColor() {
+    return this.serverStatus === 'online' ? 'green' : 'red';
+  }
+}
+
+XI. ngFor can be used to render lists dynamically
+For now in the below example only it is seen that when the button is clicked a new server is added to list and just another static line is printed
+A list of servers is created and when the button is pressed the name of server is passed to list so the size of list increases and another line will be displayed on the website
+
+note that *ngFor is used as it is manipulating the DOM
+example : 
+servers.component.html file
+<!--Use ngIf to output data conditionally-->
+
+<label>Server Name</label>
+<!--
+  <input type="text" class="form-control" (input)="onUpdateServerName($event)" />
+-->
+
+<input type="text" class="form-control" [(ngModel)]="serverName" />
+<!--<p>{{ serverName }}</p> -->
+
+<button
+  class="btn btn-primary"
+  [disabled]="!allowNewServer"
+  (click)="onCreateServer()"
+>
+  Add Server
+</button>
+<!--<p [innerText]="allowNewServer"></p> -->
+<!--<p>{{ serverCreationStatus }}</p>-->
+
+<!--If serverCreated is true then only message displayed-->
+<p *ngIf="serverCreated; else noServer">
+  Server was created and the server name is {{ serverName }}
+</p>
+
+<ng-template #noServer>
+  <p>No server was created</p>
+</ng-template>
+
+<app-server *ngFor="let server of servers"></app-server>
+
+servers.component.ts file
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-servers',
+  templateUrl: './servers.component.html',
+  //template: ` <app-server></app-server><app-server></app-server>`,
+  styleUrls: ['./servers.component.css'],
+})
+export class ServersComponent implements OnInit {
+  allowNewServer = false;
+  serverCreationStatus = 'No Server was created !';
+  serverName = 'TestServer';
+  serverCreated = false;
+  servers = ['TestServer', 'TestServer 2'];
+
+  constructor() {
+    setTimeout(() => {
+      this.allowNewServer = true;
+    }, 2000);
+  }
+
+  ngOnInit(): void {}
+
+  onCreateServer(): void {
+    this.serverCreated = true;
+    this.servers.push(this.serverName);
+    this.serverCreationStatus =
+      'Server was created & The name of the server is ' + this.serverName;
+  }
+
+  onUpdateServerName(event: Event) {
+    this.serverName = (<HTMLInputElement>event.target).value;
+  }
+}
