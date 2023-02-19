@@ -1,11 +1,16 @@
 To run the project template download zip file / clone repo and just 
 	npm install - to install all node modules
 
+
 1) Create a new project via ng new my-project --strict false (the --strict false part is important!)
 
 2) Copy the content of the ZIP attachment src/app folder into the newly created project src/app folder.
 
-3) Run your project (my-project) via ng serve
+3) Replace the files in files to replace directory
+
+4) run npm install
+
+5) Run your project (my-project) via ng serve
 
 If you try to directly run the ZIP attachments, you must run npm install first.
 
