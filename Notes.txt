@@ -513,3 +513,37 @@ export class ServersComponent implements OnInit {
     this.serverName = (<HTMLInputElement>event.target).value;
   }
 }
+
+XIII. Binding custom properties from outside the components in Angular
+In angular, we split our app into different components which we can also nest inside each other ,there comes an issue when we need to pass data between various components . 
+
+In the same way we can use this behaviour for our own components , we will be able to send data to our own components or recieve data / recieve an event in angular . 
+
+In angular, we can use property and event binding not only on our HTML elements & their native properties & events , but we can also use it on directives like( ngClass & ngStyle ) . 
+
+But most importantly, we can also use I on our own components and bind to our own custom properties & events .For-example:- In our child-component which lies inside app-component (parent-component) we can create any custom property inside child-component.ts file .
+
+export class childComponent implements OnInit{
+  customproperty : { name: string , content: string };
+  constructor(){}
+}
+
+Now if we want to access this property from our parent component i.e. app.component.html file In this case this [customproperty] cannot be accessed in our app-component.html file because by default , all the properties of a particular component are accessible inside that component only . In order to bind this property from outside , we need to add a Decorator i.e. @Input in the child.component.ts file .
+
+
+export class childComponent implements OnInit{
+  @Input() customproperty : { name: string , content: string };
+  constructor(){}
+}
+
+Also this decorator must be imported from @angular/core .
+
+Import{ Component , Input} from @angular/core ;
+
+In this way, we are exposing this property to the parent component or any component hosting our child-component . Moreover , in some cases if we don’t want to use the property name as we are using within the child-component , we can pass an argument in this case within the property name which we want to use outside that child-component .
+
+export class childComponent implements OnInit{
+   @Input(‘myproperty’) customproperty : { name: string , content: string };
+   constructor(){} }
+
+And therefore in the app-component.html we have to change the property name from [customproperty] to [myproperty]
